@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Vinay Kumar Chenna — usability, compiled</title>
-<meta name="description" content="UI and UX engineering portfolio: a design system of 196 components, an accessibility sweep with measured contrast ratios, and 117 lint rules that enforce usability.">
+<meta name="description" content="UI and UX engineering portfolio: 12 years across .NET and Angular, a design system of 196 components, an accessibility sweep with measured contrast ratios, and 117 lint rules that enforce usability.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Vinay Kumar Chenna — usability, compiled">
 <meta property="og:description" content="A portfolio that proves its claims: a live WCAG contrast meter, a documented accessibility sweep, and the lint rules that enforce the design system.">
@@ -233,6 +233,52 @@ tbody td{color:var(--ink-dim)}
 tbody td.stack{font-family:var(--mono); font-size:12px}
 tbody tr:hover td{background:var(--surface-2)}
 
+/* ─── intro + headshot ───────────────────────────────────────────────── */
+.intro{display:grid; grid-template-columns:1fr; gap:26px; margin-top:4px}
+@media (min-width:680px){
+  .intro{grid-template-columns:176px minmax(0,1fr); gap:38px; align-items:start}
+}
+.shot{
+  position:relative; width:168px; height:168px; border-radius:50%; overflow:hidden;
+  border:1px solid var(--rule); background:var(--surface-2); isolation:isolate;
+}
+.shot .monogram{
+  position:absolute; inset:0; display:grid; place-items:center;
+  font-family:var(--mono); font-size:44px; font-weight:700; letter-spacing:-.04em;
+  color:var(--ink-faint); background:var(--surface-2); z-index:0;
+}
+.shot img{
+  position:relative; z-index:1; width:100%; height:100%; object-fit:cover; display:block;
+  filter:grayscale(1) contrast(1.04) brightness(1.02);
+  transition:filter .5s cubic-bezier(.25,.46,.45,.94), transform .5s cubic-bezier(.25,.46,.45,.94);
+}
+.shot:hover img,.shot:focus-within img{filter:grayscale(0) contrast(1) brightness(1); transform:scale(1.04)}
+@media (prefers-reduced-motion:reduce){
+  .shot img{transition:filter .5s linear}
+  .shot:hover img,.shot:focus-within img{transform:none}
+}
+.facts{display:grid; grid-template-columns:1fr; gap:1px; background:var(--rule); border:1px solid var(--rule); border-radius:10px; overflow:hidden; margin:22px 0 0}
+@media (min-width:560px){.facts{grid-template-columns:1fr 1fr}}
+.facts > div{background:var(--surface); padding:13px 15px}
+.facts dt{font-family:var(--mono); font-size:10.5px; letter-spacing:.11em; text-transform:uppercase; color:var(--ink-faint)}
+.facts dd{margin:4px 0 0; font-size:13.5px; color:var(--ink-2); line-height:1.5}
+
+/* ─── work timeline ──────────────────────────────────────────────────── */
+.timeline{list-style:none; margin:26px 0 0; padding:0 0 0 22px; position:relative}
+.timeline::before{content:""; position:absolute; left:4px; top:8px; bottom:8px; width:1px; background:var(--rule)}
+.timeline li{position:relative; padding:0 0 26px}
+.timeline li:last-child{padding-bottom:0}
+.timeline li::before{
+  content:""; position:absolute; left:-22px; top:7px; width:9px; height:9px; border-radius:50%;
+  background:var(--ground); border:2px solid var(--rule);
+}
+.timeline li.now::before{background:var(--accent); border-color:var(--accent)}
+.job-head{display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 12px}
+.job-co{font-family:var(--mono); font-size:14.5px; font-weight:700; color:var(--ink)}
+.job-when{font-family:var(--mono); font-size:11.5px; color:var(--ink-faint); font-variant-numeric:tabular-nums; white-space:nowrap}
+.job-role{font-size:13px; color:var(--accent-ink); margin-top:2px; font-weight:600}
+.job-note{font-size:13.5px; color:var(--ink-dim); margin:7px 0 0; line-height:1.55; max-width:62ch}
+
 /* ─── colophon ───────────────────────────────────────────────────────── */
 .colophon{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:22px; margin-top:26px}
 .colophon h3{font-size:13px; color:var(--ink-faint); letter-spacing:.09em; text-transform:uppercase; margin-bottom:9px}
@@ -264,11 +310,13 @@ tbody tr:hover td{background:var(--surface-2)}
   <nav class="rail" aria-label="Sections">
     <ul class="rail-list">
       <li><a href="#thesis">thesis</a></li>
+      <li><a href="#intro">intro</a></li>
       <li><a href="#contrast">contrast <span class="tally">live</span></a></li>
       <li><a href="#sweep">the sweep <span class="tally">32</span></a></li>
       <li><a href="#rules">rules <span class="tally">117</span></a></li>
       <li><a href="#system">system <span class="tally">196</span></a></li>
       <li><a href="#personas">personas <span class="tally">4</span></a></li>
+      <li><a href="#work">work <span class="tally">12 yrs</span></a></li>
       <li><a href="#surfaces">surfaces <span class="tally">22</span></a></li>
       <li><a href="#colophon">colophon</a></li>
       <li class="rail-sep"><button class="theme-btn" id="themeBtn" type="button">theme: auto</button></li>
@@ -303,6 +351,42 @@ tbody tr:hover td{background:var(--surface-2)}
         <div class="stat"><span class="n">117</span><span class="l">custom lint rules enforcing it</span></div>
         <div class="stat"><span class="n">6</span><span class="l">apps, one codebase, three platforms</span></div>
         <div class="stat"><span class="n">15</span><span class="l">request states, each with its own token</span></div>
+      </div>
+    </section>
+
+    <!-- ── intro ──────────────────────────────────────────────────── -->
+    <section id="intro">
+      <p class="eyebrow">Intro</p>
+      <div class="intro">
+        <div class="shot">
+          <span class="monogram" aria-hidden="true">VC</span>
+          <img src="headshot.jpg" alt="Vinay Kumar Chenna"
+               onerror="this.remove()" width="168" height="168" loading="lazy">
+        </div>
+        <div>
+          <h2 style="margin-bottom:16px">Twelve years of backend rigour,<br>pointed at the interface.</h2>
+          <p style="color:var(--ink-2); margin:0 0 1.1em; max-width:62ch">
+            I started in .NET and stayed long enough to get good at the unglamorous half —
+            state government licensing systems, financial services, multi-tenant SaaS, the
+            kind of software where a wrong edge case is somebody's certification or benefit
+            payment. That work taught me to distrust anything that only looks correct.
+          </p>
+          <p style="color:var(--ink-2); margin:0 0 1.1em; max-width:62ch">
+            At Dell I build a Chrome extension for the Landing Pages team that flags structural
+            and design inconsistencies in templates before they ship, and Angular components
+            that surface those errors in real time. It is the same instinct as the lint rules
+            above: if a design standard matters, something other than human attention should be
+            checking it. The rest of my front-end time goes to turning Figma prototypes into
+            Angular views alongside UX and content teams, and to accessibility, SEO and
+            performance work across browsers.
+          </p>
+          <dl class="facts">
+            <div><dt>Now</dt><dd>Sr. Software Engineer, Dell — Round Rock, TX</dd></div>
+            <div><dt>Experience</dt><dd>12 years across .NET, Angular, React, Blazor and Vue</dd></div>
+            <div><dt>Education</dt><dd>MS Software Engineering, University of Houston–Clear Lake</dd></div>
+            <div><dt>Certified</dt><dd>Microsoft MCSA · MCP ASP.NET with MVC</dd></div>
+          </dl>
+        </div>
       </div>
     </section>
 
@@ -525,6 +609,21 @@ tbody tr:hover td{background:var(--surface-2)}
           <p class="job">Booking, service history, invoices — and knowing when someone is actually going to arrive.</p>
         </article>
       </div>
+    </section>
+
+    <!-- ── work ───────────────────────────────────────────────────── -->
+    <section id="work">
+      <p class="eyebrow">Work summary · 2014 — present</p>
+      <div class="prose">
+        <h2>Where the judgement came from.</h2>
+        <p>
+          Mostly systems with real consequences attached — educator certification, higher-education
+          financial aid, health and human services, brokerage. Public-sector work in particular is
+          where I learned that an interface is a policy surface: if the form is confusing, somebody
+          loses a benefit they qualified for.
+        </p>
+      </div>
+      <ol class="timeline" id="timeline"></ol>
     </section>
 
     <!-- ── surfaces ───────────────────────────────────────────────── -->
@@ -764,6 +863,34 @@ document.getElementById('motion').innerHTML = CURVES.map(function(c, i){
   return '<div class="curve"><div class="k">' + c[0] + '</div><div class="v">' + c[1] + '</div>' +
          '<div class="u">' + c[2] + '</div>' +
          '<div class="track"><i style="width:' + (16 + i * 6.5) + '%"></i></div></div>';
+}).join('');
+
+/* ── work timeline ─────────────────────────────────────────────────── */
+const JOBS = [
+  ['Dell','Sr. Software Engineer','Apr 2024 — Present','Round Rock, TX',
+   'A Chrome extension that catches structural and design inconsistencies in landing-page templates before release, with Angular components surfacing the errors live. Web APIs on .NET 8, micro-frontends, and accessibility, SEO and cross-browser performance work.', true],
+  ['Texas Education Agency','Developer — ECOS','Feb 2023 — Mar 2024','State of Texas',
+   'Educator Certification Online System, plus federal financial-aid programs. Made workflow rules match actual TEA policy, and fed user feedback back into the design rather than around it. Angular, TypeScript, RxJS, .NET 8, Blazor.', false],
+  ['Louisiana Dept. of Education','Sr. .NET Developer','Feb 2022 — Feb 2023','State of Louisiana',
+   'Higher-education enterprise systems and federal aid. Worked inside a full product team — UX designers, visual designers, content strategists — rather than receiving finished screens. Vue.js and React views on .NET Core.', false],
+  ['Charles Schwab','Sr. .NET Developer','Jan 2021 — Jan 2022','Financial services',
+   'Brokerage systems on .NET Core and Web API, in an environment where correctness is audited rather than assumed.', false],
+  ['McDonald’s','Sr. .NET Developer','Jan 2020 — Jan 2021','Chicago, IL',
+   'Built, certified and deployed the PAM solution across its restaurant components — software that has to work for staff mid-shift, not for an evaluator.', false],
+  ['HHSC, State of Texas','.NET Full Stack Developer','Dec 2018 — Jan 2020','Austin, TX',
+   'SHIMS — the Specialty Health Independent Management System — migrated between the Texas Workforce Commission and HHSC without losing the casework in transit.', false],
+  ['Fidelis Elite Systems','Full Stack Developer','Dec 2015 — Nov 2018','San Antonio, TX',
+   'Enterprise web applications on .NET Core and Angular, with Azure hosting. Where the front-end half of the work really started.', false],
+  ['Soft Solutions','.NET Developer','Aug 2015 — Dec 2015','Hyderabad, India', '', false],
+  ['Fratello InnoTech','Full Stack Developer','Aug 2014 — Aug 2015','', '', false]
+];
+document.getElementById('timeline').innerHTML = JOBS.map(function(j){
+  return '<li' + (j[5] ? ' class="now"' : '') + '>' +
+    '<div class="job-head"><span class="job-co">' + j[0] + '</span>' +
+    '<span class="job-when">' + j[2] + (j[3] ? ' · ' + j[3] : '') + '</span></div>' +
+    '<div class="job-role">' + j[1] + '</div>' +
+    (j[4] ? '<p class="job-note">' + j[4] + '</p>' : '') +
+  '</li>';
 }).join('');
 
 /* ── surfaces ──────────────────────────────────────────────────────── */
