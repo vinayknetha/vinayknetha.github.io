@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vinay Knetha — usability, compiled</title>
+<title>Vinay Kumar Chenna — usability, compiled</title>
 <meta name="description" content="UI and UX engineering portfolio: a design system of 196 components, an accessibility sweep with measured contrast ratios, and 117 lint rules that enforce usability.">
 <meta name="color-scheme" content="light dark">
-<meta property="og:title" content="Vinay Knetha — usability, compiled">
+<meta property="og:title" content="Vinay Kumar Chenna — usability, compiled">
 <meta property="og:description" content="A portfolio that proves its claims: a live WCAG contrast meter, a documented accessibility sweep, and the lint rules that enforce the design system.">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>%F0%9F%93%90</text></svg>">
@@ -292,7 +292,7 @@ tbody tr:hover td{background:var(--surface-2)}
         running screen on web, iOS and Android.
       </p>
       <p class="byline rise" style="animation-delay:.26s">
-        <span>Vinay Knetha</span>
+        <span>Vinay Kumar Chenna</span>
         <span aria-hidden="true">·</span>
         <a href="https://github.com/vinayknetha">github.com/vinayknetha</a>
         <span aria-hidden="true">·</span>
@@ -542,7 +542,7 @@ tbody tr:hover td{background:var(--surface-2)}
           <thead>
             <tr><th scope="col">Product</th><th scope="col">Interface</th><th scope="col">Stack</th></tr>
           </thead>
-          <tbody id="surfaces"></tbody>
+          <tbody id="surfaces-rows"></tbody>
         </table>
       </div>
     </section>
@@ -777,7 +777,7 @@ const SURF = [
   ['bharat-erp','Multi-module ERP frontend','React 19 · Vite · TanStack Query · Tailwind 4'],
   ['Product sites','16 product sites across campus, clinical, fleet, salon, school and warehouse verticals','Hand-authored HTML · CSS']
 ];
-document.getElementById('surfaces').innerHTML = SURF.map(function(s){
+document.getElementById('surfaces-rows').innerHTML = SURF.map(function(s){
   return '<tr><td>' + s[0] + '</td><td>' + s[1] + '</td><td class="stack">' + s[2] + '</td></tr>';
 }).join('');
 
