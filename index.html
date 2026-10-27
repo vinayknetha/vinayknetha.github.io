@@ -1,0 +1,800 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vinay Knetha — usability, compiled</title>
+<meta name="description" content="UI and UX engineering portfolio: a design system of 196 components, an accessibility sweep with measured contrast ratios, and 117 lint rules that enforce usability.">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="Vinay Knetha — usability, compiled">
+<meta property="og:description" content="A portfolio that proves its claims: a live WCAG contrast meter, a documented accessibility sweep, and the lint rules that enforce the design system.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>%F0%9F%93%90</text></svg>">
+<style>
+/* ─── tokens ─────────────────────────────────────────────────────────── */
+:root{
+  --ground:#F6F7FA; --ground-2:#EDEFF5; --surface:#FFFFFF; --surface-2:#F9FAFC;
+  --ink:#0F1420; --ink-2:#333C4E; --ink-dim:#5A6478; --ink-faint:#8A93A6;
+  --rule:#E0E4EC; --rule-soft:#EBEEF4;
+  --accent:#2563EB; --accent-soft:#E7EEFD; --accent-ink:#1E40AF;
+  --pass:#15803D; --pass-soft:#E7F5EC;
+  --warn:#B45309; --warn-soft:#FBF0E0;
+  --fail:#B91C1C; --fail-soft:#FBE9E9;
+  --shadow:0 1px 2px rgba(15,20,32,.05), 0 8px 24px -16px rgba(15,20,32,.18);
+  --mono:ui-monospace,"Cascadia Code","Cascadia Mono","SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+  --sans:"Segoe UI Variable Text","Segoe UI",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --ground:#0B0E14; --ground-2:#0F131C; --surface:#141924; --surface-2:#1A202D;
+    --ink:#E8ECF4; --ink-2:#C2CAD9; --ink-dim:#98A3B8; --ink-faint:#6D7889;
+    --rule:#232B3A; --rule-soft:#1C2330;
+    --accent:#6AA2FF; --accent-soft:#182642; --accent-ink:#93C5FD;
+    --pass:#5BD98A; --pass-soft:#12271C;
+    --warn:#F0B429; --warn-soft:#2A2113;
+    --fail:#FF8A8A; --fail-soft:#2B1618;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -18px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0B0E14; --ground-2:#0F131C; --surface:#141924; --surface-2:#1A202D;
+  --ink:#E8ECF4; --ink-2:#C2CAD9; --ink-dim:#98A3B8; --ink-faint:#6D7889;
+  --rule:#232B3A; --rule-soft:#1C2330;
+  --accent:#6AA2FF; --accent-soft:#182642; --accent-ink:#93C5FD;
+  --pass:#5BD98A; --pass-soft:#12271C;
+  --warn:#F0B429; --warn-soft:#2A2113;
+  --fail:#FF8A8A; --fail-soft:#2B1618;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -18px rgba(0,0,0,.9);
+}
+:root[data-theme="light"]{
+  --ground:#F6F7FA; --ground-2:#EDEFF5; --surface:#FFFFFF; --surface-2:#F9FAFC;
+  --ink:#0F1420; --ink-2:#333C4E; --ink-dim:#5A6478; --ink-faint:#8A93A6;
+  --rule:#E0E4EC; --rule-soft:#EBEEF4;
+  --accent:#2563EB; --accent-soft:#E7EEFD; --accent-ink:#1E40AF;
+  --pass:#15803D; --pass-soft:#E7F5EC;
+  --warn:#B45309; --warn-soft:#FBF0E0;
+  --fail:#B91C1C; --fail-soft:#FBE9E9;
+  --shadow:0 1px 2px rgba(15,20,32,.05), 0 8px 24px -16px rgba(15,20,32,.18);
+}
+
+/* ─── base ───────────────────────────────────────────────────────────── */
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:var(--sans); font-size:16px; line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent-ink); text-decoration-thickness:1px; text-underline-offset:3px}
+a:hover{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:3px}
+code,kbd{font-family:var(--mono); font-size:.86em}
+
+.wrap{display:grid; grid-template-columns:minmax(0,1fr); max-width:1240px; margin:0 auto; padding:0 20px}
+@media (min-width:1040px){
+  .wrap{grid-template-columns:200px minmax(0,1fr); gap:56px; padding:0 32px}
+}
+
+/* ─── index rail ─────────────────────────────────────────────────────── */
+.rail{
+  position:sticky; top:0; z-index:20; background:var(--ground);
+  border-bottom:1px solid var(--rule); margin:0 -20px; padding:10px 20px;
+  overflow-x:auto; -webkit-overflow-scrolling:touch;
+}
+.rail-list{display:flex; gap:6px; list-style:none; margin:0; padding:0; white-space:nowrap}
+.rail a{
+  display:inline-flex; align-items:baseline; gap:7px; padding:6px 10px; border-radius:6px;
+  font-family:var(--mono); font-size:12px; letter-spacing:.02em;
+  color:var(--ink-dim); text-decoration:none;
+}
+.rail a:hover{background:var(--ground-2); color:var(--ink)}
+.rail a .tally{color:var(--accent); font-variant-numeric:tabular-nums}
+@media (min-width:1040px){
+  .rail{
+    position:sticky; top:0; align-self:start; height:100vh; overflow-y:auto; overflow-x:visible;
+    border-bottom:0; border-right:1px solid var(--rule);
+    margin:0; padding:48px 24px 48px 0;
+  }
+  .rail-list{flex-direction:column; gap:2px; white-space:normal}
+  .rail a{padding:7px 10px}
+}
+
+/* ─── sections ───────────────────────────────────────────────────────── */
+main{min-width:0; padding-bottom:96px}
+section{padding:72px 0; border-top:1px solid var(--rule-soft)}
+section:first-of-type{border-top:0}
+.prose{max-width:68ch}
+.prose p{color:var(--ink-2); margin:0 0 1.1em}
+.prose p:last-child{margin-bottom:0}
+
+.eyebrow{
+  font-family:var(--mono); font-size:11.5px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink-faint); margin:0 0 14px; display:flex; align-items:center; gap:10px;
+}
+.eyebrow::after{content:""; flex:1; height:1px; background:var(--rule)}
+
+h1,h2,h3{font-family:var(--mono); font-weight:700; text-wrap:balance; color:var(--ink)}
+h2{font-size:clamp(26px,3.4vw,38px); line-height:1.12; letter-spacing:-.025em; margin:0 0 20px}
+h3{font-size:16px; letter-spacing:-.01em; margin:0 0 8px}
+
+/* ─── hero ───────────────────────────────────────────────────────────── */
+.hero{padding:88px 0 72px}
+.hero h1{
+  font-size:clamp(40px,8.2vw,88px); line-height:.95; letter-spacing:-.045em;
+  margin:0 0 28px; text-transform:lowercase;
+}
+.hero h1 .dim{color:var(--ink-faint)}
+.hero .lede{font-size:clamp(17px,1.9vw,20px); line-height:1.6; color:var(--ink-2); max-width:60ch; margin:0 0 14px}
+.hero .lede strong{color:var(--ink); font-weight:600}
+.byline{
+  font-family:var(--mono); font-size:12.5px; color:var(--ink-dim);
+  display:flex; flex-wrap:wrap; gap:8px 16px; align-items:center; margin:0 0 36px;
+}
+.byline a{color:var(--ink-dim)}
+.byline a:hover{color:var(--accent)}
+
+.stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(132px,1fr)); gap:1px; background:var(--rule); border:1px solid var(--rule); border-radius:10px; overflow:hidden}
+.stat{background:var(--surface); padding:18px 16px}
+.stat .n{font-family:var(--mono); font-size:clamp(24px,3vw,32px); font-weight:700; letter-spacing:-.03em; color:var(--ink); font-variant-numeric:tabular-nums; display:block; line-height:1}
+.stat .l{font-size:12.5px; color:var(--ink-dim); margin-top:7px; display:block; line-height:1.35}
+
+/* ─── contrast meter ─────────────────────────────────────────────────── */
+.meter{border:1px solid var(--rule); border-radius:12px; background:var(--surface); overflow:hidden; margin-top:28px}
+.meter-head{display:flex; flex-wrap:wrap; gap:8px; padding:14px; border-bottom:1px solid var(--rule); background:var(--surface-2)}
+.chip{
+  font-family:var(--mono); font-size:12px; padding:6px 11px; border-radius:999px;
+  border:1px solid var(--rule); background:var(--surface); color:var(--ink-dim); cursor:pointer;
+}
+.chip:hover{border-color:var(--accent); color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--accent-soft); border-color:var(--accent); color:var(--accent-ink); font-weight:600}
+.meter-body{display:grid; grid-template-columns:1fr; gap:1px; background:var(--rule)}
+@media (min-width:620px){.meter-body{grid-template-columns:1fr 1fr}}
+.swatch{background:var(--surface); padding:20px}
+.swatch .ctx{font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint); margin:0 0 12px; display:flex; justify-content:space-between; gap:10px}
+.swatch .ctx b{color:var(--ink-dim); font-weight:600}
+.sample{border-radius:8px; padding:16px; border:1px solid transparent; margin-bottom:14px}
+.sample .txt{font-size:15px; font-weight:600; line-height:1.4}
+.sample .hex{font-family:var(--mono); font-size:11.5px; margin-top:4px}
+.readout{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
+.ratio{font-family:var(--mono); font-size:26px; font-weight:700; letter-spacing:-.02em; font-variant-numeric:tabular-nums}
+.verdict{font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; padding:4px 9px; border-radius:5px; font-weight:700}
+.v-pass{background:var(--pass-soft); color:var(--pass)}
+.v-fail{background:var(--fail-soft); color:var(--fail)}
+.v-warn{background:var(--warn-soft); color:var(--warn)}
+.meter-note{padding:14px 20px; border-top:1px solid var(--rule); background:var(--surface-2); font-size:13.5px; color:var(--ink-dim); margin:0}
+.meter-note code{color:var(--ink-2)}
+
+/* ─── fix cards ──────────────────────────────────────────────────────── */
+.fixes{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; margin-top:28px}
+.fix{border:1px solid var(--rule); border-radius:10px; background:var(--surface); padding:18px; display:flex; flex-direction:column; gap:10px}
+.fix .tag{font-family:var(--mono); font-size:10.5px; letter-spacing:.11em; text-transform:uppercase; color:var(--ink-faint)}
+.fix p{margin:0; font-size:14px; color:var(--ink-2); line-height:1.55}
+.ba{display:flex; flex-direction:column; gap:7px; font-family:var(--mono); font-size:12.5px}
+.ba div{padding:8px 11px; border-radius:6px; line-height:1.45}
+.before{background:var(--fail-soft); color:var(--fail)}
+.after{background:var(--pass-soft); color:var(--pass)}
+
+/* ─── legend demo ────────────────────────────────────────────────────── */
+.legend-demo{border:1px solid var(--rule); border-radius:10px; background:var(--surface); padding:18px; margin-top:16px}
+.legend-demo p{margin:0; font-size:14px; color:var(--ink-dim); line-height:1.55}
+.legend-row{display:flex; flex-wrap:wrap; gap:18px; margin:14px 0 10px}
+.legend-item{display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--ink-2)}
+.dot{width:11px; height:11px; border-radius:50%; flex:none}
+.mono-sim .dot{filter:grayscale(1) contrast(.55)}
+.mono-sim .legend-item{color:var(--ink-dim)}
+.toggle{display:inline-flex; align-items:center; gap:9px; font-family:var(--mono); font-size:12px; color:var(--ink-dim); cursor:pointer; user-select:none}
+.toggle input{accent-color:var(--accent); width:15px; height:15px; cursor:pointer}
+
+/* ─── rule ledger ────────────────────────────────────────────────────── */
+.ledger{border:1px solid var(--rule); border-radius:12px; overflow:hidden; margin-top:24px; background:var(--surface)}
+.ledger-head{display:flex; flex-wrap:wrap; gap:8px; padding:14px; background:var(--surface-2); border-bottom:1px solid var(--rule)}
+.rows{display:flex; flex-direction:column}
+.row{display:grid; grid-template-columns:1fr; gap:4px; padding:13px 16px; border-top:1px solid var(--rule-soft); transition:background .14s ease}
+.row:first-child{border-top:0}
+.row:hover{background:var(--surface-2)}
+@media (min-width:760px){
+  .row{grid-template-columns:minmax(250px,.85fr) minmax(0,1.35fr); gap:20px; align-items:baseline}
+}
+.row .name{font-family:var(--mono); font-size:13px; color:var(--ink); font-weight:600; word-break:break-word}
+.row .what{font-size:13.5px; color:var(--ink-dim); line-height:1.5}
+.row .cat{display:inline-block; font-family:var(--mono); font-size:10px; letter-spacing:.09em; text-transform:uppercase; color:var(--accent-ink); background:var(--accent-soft); padding:2px 7px; border-radius:4px; margin-right:8px}
+.ledger-foot{padding:13px 16px; border-top:1px solid var(--rule); background:var(--surface-2); font-size:13px; color:var(--ink-dim); margin:0}
+
+/* ─── token / motion grids ───────────────────────────────────────────── */
+.note{max-width:68ch; color:var(--ink-dim); font-size:14px; margin:0; line-height:1.6}
+.tokens{display:grid; grid-template-columns:repeat(auto-fill,minmax(118px,1fr)); gap:10px; margin-top:18px}
+.token{border:1px solid var(--rule); border-radius:8px; overflow:hidden; background:var(--surface)}
+.token .fill{height:40px}
+.token .meta{padding:8px 10px; font-family:var(--mono); font-size:11px; line-height:1.45}
+.token .meta .k{color:var(--ink); display:block; word-break:break-all}
+.token .meta .v{color:var(--ink-faint)}
+
+.motion{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1px; background:var(--rule); border:1px solid var(--rule); border-radius:10px; overflow:hidden; margin-top:18px}
+.curve{background:var(--surface); padding:15px 16px}
+.curve .k{font-family:var(--mono); font-size:13px; color:var(--ink); font-weight:600}
+.curve .v{font-family:var(--mono); font-size:11.5px; color:var(--ink-faint); margin-top:2px}
+.curve .u{font-size:13px; color:var(--ink-dim); margin-top:7px; line-height:1.45}
+.track{height:3px; background:var(--rule); border-radius:2px; margin-top:11px; overflow:hidden}
+.track i{display:block; height:100%; background:var(--accent); border-radius:2px}
+
+/* ─── personas ───────────────────────────────────────────────────────── */
+.personas{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; margin-top:24px}
+.persona{border:1px solid var(--rule); border-left:3px solid var(--accent); border-radius:8px; background:var(--surface); padding:15px 16px}
+.persona .who{font-family:var(--mono); font-size:13.5px; font-weight:700; color:var(--ink)}
+.persona .lines{font-family:var(--mono); font-size:11.5px; color:var(--accent-ink); font-variant-numeric:tabular-nums; margin-top:2px}
+.persona .job{font-size:13.5px; color:var(--ink-dim); margin:9px 0 0; line-height:1.5}
+
+/* ─── surfaces table ─────────────────────────────────────────────────── */
+.scroller{overflow-x:auto; border:1px solid var(--rule); border-radius:10px; margin-top:24px; background:var(--surface)}
+table{border-collapse:collapse; width:100%; min-width:580px; font-size:13.5px}
+th,td{text-align:left; padding:12px 16px; border-top:1px solid var(--rule-soft)}
+thead th{border-top:0; background:var(--surface-2); font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); font-weight:600}
+tbody td:first-child{font-family:var(--mono); font-weight:600; color:var(--ink); white-space:nowrap}
+tbody td{color:var(--ink-dim)}
+tbody td.stack{font-family:var(--mono); font-size:12px}
+tbody tr:hover td{background:var(--surface-2)}
+
+/* ─── colophon ───────────────────────────────────────────────────────── */
+.colophon{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:22px; margin-top:26px}
+.colophon h3{font-size:13px; color:var(--ink-faint); letter-spacing:.09em; text-transform:uppercase; margin-bottom:9px}
+.colophon p,.colophon li{font-size:13.5px; color:var(--ink-dim); line-height:1.6; margin:0}
+.colophon ul{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:5px}
+
+.theme-btn{
+  font-family:var(--mono); font-size:12px; padding:6px 11px; border-radius:6px;
+  border:1px solid var(--rule); background:var(--surface); color:var(--ink-dim);
+  cursor:pointer; white-space:nowrap;
+}
+.theme-btn:hover{color:var(--ink); border-color:var(--accent)}
+.rail-sep{display:flex; align-items:center}
+@media (min-width:1040px){
+  .rail-sep{margin-top:14px; padding-top:14px; border-top:1px solid var(--rule)}
+}
+
+/* ─── load stagger ───────────────────────────────────────────────────── */
+@media (prefers-reduced-motion:no-preference){
+  .rise{animation:rise .62s cubic-bezier(.25,.46,.45,.94) backwards}
+  @keyframes rise{from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:none}}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <nav class="rail" aria-label="Sections">
+    <ul class="rail-list">
+      <li><a href="#thesis">thesis</a></li>
+      <li><a href="#contrast">contrast <span class="tally">live</span></a></li>
+      <li><a href="#sweep">the sweep <span class="tally">32</span></a></li>
+      <li><a href="#rules">rules <span class="tally">117</span></a></li>
+      <li><a href="#system">system <span class="tally">196</span></a></li>
+      <li><a href="#personas">personas <span class="tally">4</span></a></li>
+      <li><a href="#surfaces">surfaces <span class="tally">22</span></a></li>
+      <li><a href="#colophon">colophon</a></li>
+      <li class="rail-sep"><button class="theme-btn" id="themeBtn" type="button">theme: auto</button></li>
+    </ul>
+  </nav>
+
+  <main>
+
+    <!-- ── thesis ─────────────────────────────────────────────────── -->
+    <section class="hero" id="thesis">
+      <h1 class="rise" style="animation-delay:.04s">usability,<br><span class="dim">compiled.</span></h1>
+      <p class="lede rise" style="animation-delay:.14s">
+        Most portfolios show a screenshot and ask you to take the craft on faith.
+        This one shows the <strong>enforcement</strong>: the design system, the accessibility
+        sweep with its measured ratios, and the 117 lint rules that turn a usability
+        principle into something a teammate cannot quietly opt out of.
+      </p>
+      <p class="lede rise" style="animation-delay:.2s">
+        I build the interface as well as the service behind it — multi-tenant software for salons,
+        campuses, hostels and field operations, carried from the design decision all the way to a
+        running screen on web, iOS and Android.
+      </p>
+      <p class="byline rise" style="animation-delay:.26s">
+        <span>Vinay Knetha</span>
+        <span aria-hidden="true">·</span>
+        <a href="https://github.com/vinayknetha">github.com/vinayknetha</a>
+        <span aria-hidden="true">·</span>
+        <a href="mailto:vinayknetha@gmail.com">vinayknetha@gmail.com</a>
+      </p>
+      <div class="stats rise" style="animation-delay:.32s">
+        <div class="stat"><span class="n">196</span><span class="l">components in one shared system</span></div>
+        <div class="stat"><span class="n">117</span><span class="l">custom lint rules enforcing it</span></div>
+        <div class="stat"><span class="n">6</span><span class="l">apps, one codebase, three platforms</span></div>
+        <div class="stat"><span class="n">15</span><span class="l">request states, each with its own token</span></div>
+      </div>
+    </section>
+
+    <!-- ── contrast ───────────────────────────────────────────────── -->
+    <section id="contrast">
+      <p class="eyebrow">Contrast, measured — not asserted</p>
+      <div class="prose">
+        <h2>A brand colour is not a text colour.</h2>
+        <p>
+          The semantic tokens in our system were chosen for fills and icons, then quietly reused for
+          small labels. That is where accessibility breaks without anyone noticing:
+          <code>$danger</code> and <code>$info</code> look decisive on a white card and fall under
+          the body-text minimum the moment they have to carry words.
+        </p>
+        <p>
+          The meter below is live — it computes real WCAG 2.1 ratios in your browser. Each token is
+          measured against <em>both</em> grounds, because that is the whole point: a fixed hex lands
+          differently in light and dark, and a token that only passes in the theme you happened to
+          design in is not a fix.
+        </p>
+      </div>
+
+      <div class="meter">
+        <div class="meter-head" role="group" aria-label="Choose a token pair">
+          <button class="chip" type="button" data-pair="danger" aria-pressed="true">$danger → $red7</button>
+          <button class="chip" type="button" data-pair="info" aria-pressed="false">$info → $blue9</button>
+          <button class="chip" type="button" data-pair="success" aria-pressed="false">$green8 → $green9</button>
+        </div>
+        <div class="meter-body">
+          <div class="swatch" data-cell="bl">
+            <p class="ctx"><span>Before — the semantic token</span><b>light ground</b></p>
+            <div class="sample"><div class="txt"></div><div class="hex"></div></div>
+            <div class="readout"><span class="ratio">—</span><span class="verdict">—</span></div>
+          </div>
+          <div class="swatch" data-cell="bd">
+            <p class="ctx"><span>Before — the semantic token</span><b>dark ground</b></p>
+            <div class="sample"><div class="txt"></div><div class="hex"></div></div>
+            <div class="readout"><span class="ratio">—</span><span class="verdict">—</span></div>
+          </div>
+          <div class="swatch" data-cell="al">
+            <p class="ctx"><span>After — theme-scaled</span><b>light ground</b></p>
+            <div class="sample"><div class="txt"></div><div class="hex"></div></div>
+            <div class="readout"><span class="ratio">—</span><span class="verdict">—</span></div>
+          </div>
+          <div class="swatch" data-cell="ad">
+            <p class="ctx"><span>After — theme-scaled</span><b>dark ground</b></p>
+            <div class="sample"><div class="txt"></div><div class="hex"></div></div>
+            <div class="readout"><span class="ratio">—</span><span class="verdict">—</span></div>
+          </div>
+        </div>
+        <p class="meter-note" id="m-note"></p>
+      </div>
+    </section>
+
+    <!-- ── sweep ──────────────────────────────────────────────────── -->
+    <section id="sweep">
+      <p class="eyebrow">32 fixes · 23 files · +587 / −158</p>
+      <div class="prose">
+        <h2>The accessibility sweep.</h2>
+        <p>
+          One pass across the salon operations tracking and dashboard screens, fixing contrast, theme
+          parity and labelling together — because they are the same bug seen from three angles. A
+          prototype hex that only ever ran in light mode is a contrast failure, a dark-mode failure,
+          and usually sitting on an unlabelled control as well.
+        </p>
+        <p>
+          The sweep also turned up a defect nobody had filed: the anomalies panel's CSV export was
+          missing its timezone dependency, so exported timestamps could carry a stale timezone.
+          Reading a screen carefully for accessibility is also reading it carefully for correctness.
+        </p>
+      </div>
+
+      <div class="fixes">
+        <article class="fix">
+          <span class="tag">Name the action, not the state</span>
+          <p>A control labelled with the current state leaves you guessing what the tap will do.</p>
+          <div class="ba">
+            <div class="before">"Open" — is the store open, or will this open it?</div>
+            <div class="after">"Close store" when open, "Open store" when closed — a raised button with a matching accessibility label. State stays legible from the row tint, the opened-at line and the header counts.</div>
+          </div>
+        </article>
+
+        <article class="fix">
+          <span class="tag">Theme parity</span>
+          <p>The red scale inverts per mode, so a token picked in light mode silently flips meaning in dark.</p>
+          <div class="ba">
+            <div class="before">backgroundColor="$red6" → resolves to #EF4444 in light; a white label on it fails.</div>
+            <div class="after">A theme-stable red-600 hex for the destructive button, and theme-scaled pairs everywhere text is involved.</div>
+          </div>
+        </article>
+
+        <article class="fix">
+          <span class="tag">Icon-only controls</span>
+          <p>Refresh, sort, week navigation, back, close, staff bubble — tap targets with no accessible name.</p>
+          <div class="ba">
+            <div class="before">&lt;IconButton icon={RefreshCw} /&gt;</div>
+            <div class="after">Every icon-only control carries an accessibilityLabel naming what it does.</div>
+          </div>
+        </article>
+
+        <article class="fix">
+          <span class="tag">Layout under pressure</span>
+          <p>The mobile face-pile drifted out from under the store name once more than a few staff were on shift.</p>
+          <div class="ba">
+            <div class="before">Bubbles wrapped away from their heading; identity colour shifted between renders.</div>
+            <div class="after">Pile aligned under the store name; each employee keeps a fixed identity colour, with green / orange / grey status dots layered on top.</div>
+          </div>
+        </article>
+      </div>
+
+      <div class="legend-demo">
+        <h3>Colour alone is not a legend.</h3>
+        <p>
+          The live map separated "outside the geofence" from "violation" by hue only. Tick the box to
+          see what that map was telling an operator who cannot distinguish those two hues.
+        </p>
+        <div class="legend-row" id="legend">
+          <span class="legend-item"><span class="dot" style="background:#22C55E"></span><span class="lbl">On site</span></span>
+          <span class="legend-item"><span class="dot" style="background:#F59E0B"></span><span class="lbl">Outside geofence</span></span>
+          <span class="legend-item"><span class="dot" style="background:#EF4444"></span><span class="lbl">Violation</span></span>
+        </div>
+        <label class="toggle"><input type="checkbox" id="mono"> drop the labels and desaturate</label>
+      </div>
+    </section>
+
+    <!-- ── rules ──────────────────────────────────────────────────── -->
+    <section id="rules">
+      <p class="eyebrow">117 custom rules · 24 shared readers</p>
+      <div class="prose">
+        <h2>A usability principle nobody enforces is just a preference.</h2>
+        <p>
+          A design review catches a problem once. A lint rule catches it on every author, in every
+          file, forever — and its error message teaches the fix at the exact moment of the mistake.
+          So the house style is not a document. It is 117 rules that fail the build.
+        </p>
+        <p>The ledger below is a selection, grouped by the principle each rule defends.</p>
+      </div>
+
+      <div class="ledger">
+        <div class="ledger-head" role="group" aria-label="Filter rules by principle">
+          <button class="chip" type="button" data-cat="all" aria-pressed="true">all</button>
+          <button class="chip" type="button" data-cat="feedback" aria-pressed="false">feedback</button>
+          <button class="chip" type="button" data-cat="states" aria-pressed="false">states</button>
+          <button class="chip" type="button" data-cat="tokens" aria-pressed="false">tokens</button>
+          <button class="chip" type="button" data-cat="responsive" aria-pressed="false">responsive</button>
+          <button class="chip" type="button" data-cat="touch" aria-pressed="false">touch</button>
+          <button class="chip" type="button" data-cat="i18n" aria-pressed="false">i18n</button>
+        </div>
+        <div class="rows" id="rows"></div>
+        <p class="ledger-foot">
+          Showing <span id="shown">0</span> of 117. The rest cover data-layer typing, cache
+          invalidation, timezone correctness and cross-persona module boundaries.
+        </p>
+      </div>
+    </section>
+
+    <!-- ── system ─────────────────────────────────────────────────── -->
+    <section id="system">
+      <p class="eyebrow">196 components · 68 primitives · 3 platforms</p>
+      <div class="prose">
+        <h2>One system, six apps, three platforms.</h2>
+        <p>
+          Admin, operator, owner, customer, public and marketing surfaces all draw from a single
+          component package. Shipping React Native and web from one source means a design decision
+          has to survive a touch target, a mouse pointer and a screen reader before it counts as done.
+        </p>
+      </div>
+
+      <h3 style="margin-top:34px">State is a token, not a colour someone picked</h3>
+      <p class="note">
+        Fifteen request states and four priorities, each with a named token — so "escalated" reads
+        the same in a list row, a chart segment and a push notification.
+      </p>
+      <div class="tokens" id="tokens"></div>
+
+      <h3 style="margin-top:40px">Twelve named curves, one driver per platform</h3>
+      <p class="note">
+        Web gets CSS transitions, native gets Reanimated springs, and the bundler picks the driver —
+        so a component animates correctly on both without a platform branch inside it. A
+        <code>useReducedMotion</code> hook gates anything decorative.
+      </p>
+      <div class="motion" id="motion"></div>
+    </section>
+
+    <!-- ── personas ───────────────────────────────────────────────── -->
+    <section id="personas">
+      <p class="eyebrow">4 roles · 1,605 lines · written before any screen</p>
+      <div class="prose">
+        <h2>The design work that happens before the first screen.</h2>
+        <p>
+          For the field-service product, nothing was drawn until each role's day had been written
+          end to end — what they are trying to finish, what they can see, what they are allowed to
+          change, and where the handoff to the next role happens.
+        </p>
+        <p>
+          That is what kept the dispatcher's screen from becoming the owner's screen with buttons
+          removed. The owner needs every lever. The dispatcher needs today's route and the three
+          exceptions blocking it. Same data, genuinely different interfaces.
+        </p>
+      </div>
+      <div class="personas">
+        <article class="persona">
+          <div class="who">Owner</div>
+          <div class="lines">349 lines</div>
+          <p class="job">All-access business admin: clients, scheduling, workforce, payments, financials, reporting, marketplace listing, promos, settings.</p>
+        </article>
+        <article class="persona">
+          <div class="who">Dispatcher</div>
+          <div class="lines">423 lines</div>
+          <p class="job">Today's board: routes, assignments, exceptions — and the calls that arrive while all of it is still moving.</p>
+        </article>
+        <article class="persona">
+          <div class="who">Employee</div>
+          <div class="lines">417 lines</div>
+          <p class="job">On a phone, outdoors, one-handed: the next job, how to get there, time tracking, proof of completion.</p>
+        </article>
+        <article class="persona">
+          <div class="who">Client</div>
+          <div class="lines">416 lines</div>
+          <p class="job">Booking, service history, invoices — and knowing when someone is actually going to arrive.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ── surfaces ───────────────────────────────────────────────── -->
+    <section id="surfaces">
+      <p class="eyebrow">Interfaces shipped</p>
+      <div class="prose">
+        <h2>Designs turned into working software.</h2>
+        <p>
+          Six product frontends and sixteen product sites, across React 19, Next.js, Vite and
+          Tailwind — each one a real application with a backend behind it, not a mockup.
+        </p>
+      </div>
+      <div class="scroller">
+        <table>
+          <thead>
+            <tr><th scope="col">Product</th><th scope="col">Interface</th><th scope="col">Stack</th></tr>
+          </thead>
+          <tbody id="surfaces"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── colophon ───────────────────────────────────────────────── -->
+    <section id="colophon">
+      <p class="eyebrow">Colophon</p>
+      <div class="prose">
+        <h2>This page is the sample.</h2>
+        <p>
+          Hand-written HTML and CSS, no framework and no build step. It sets its own type scale,
+          ships light and dark as two designed states rather than one inverted, lays out with grid
+          and <code>gap</code> instead of margin arithmetic, keeps every focus state visible, lets
+          wide content scroll inside its own container rather than the page, and turns its load
+          animation off when your system asks for reduced motion.
+        </p>
+        <p>
+          The contrast meter computes real WCAG ratios in your browser rather than quoting mine.
+          If you do not trust the numbers in the case study above, read the luminance function.
+        </p>
+      </div>
+      <div class="colophon">
+        <div>
+          <h3>Type</h3>
+          <p>Monospace as the display face — the subject is rules and tokens, so the page speaks in
+          that vernacular. Humanist sans for reading, held near 68 characters.</p>
+        </div>
+        <div>
+          <h3>Colour</h3>
+          <p>Cool neutrals biased toward the accent. The semantic colours are the contrast-corrected
+          pairs the sweep produced, kept separate from the accent hue.</p>
+        </div>
+        <div>
+          <h3>Elsewhere</h3>
+          <ul>
+            <li><a href="https://github.com/vinayknetha">github.com/vinayknetha</a></li>
+            <li><a href="mailto:vinayknetha@gmail.com">vinayknetha@gmail.com</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+/* ── WCAG 2.1 relative luminance + contrast ratio ──────────────────── */
+function lum(hex){
+  const n = parseInt(hex.slice(1), 16);
+  const c = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(function(v){
+    v /= 255;
+    return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+}
+function ratio(a, b){
+  const l1 = lum(a), l2 = lum(b);
+  return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+}
+function verdict(r){
+  if (r >= 7)   return ['v-pass', 'Passes AAA'];
+  if (r >= 4.5) return ['v-pass', 'Passes AA'];
+  if (r >= 3)   return ['v-warn', 'Large text only'];
+  return ['v-fail', 'Fails AA'];
+}
+
+const LIGHT_BG = '#FFFFFF', DARK_BG = '#141924';
+
+const PAIRS = {
+  danger: {
+    label: 'Off geofence · 45m',
+    before: { name: '$danger', light: '#EF4444', dark: '#EF4444' },
+    after:  { name: '$red7',   light: '#B91C1C', dark: '#FF8A8A' },
+    note: '<code>$danger</code> is the same <code>#EF4444</code> in both themes, so it lands differently on each ground: comfortable in dark, under the 4.5:1 body-text minimum in light. That split is the bug — a token whose legibility depends on which theme the operator happens to be in. The theme-scaled <code>$red7</code> darkens on light grounds and lightens on dark ones, and clears the bar on both.'
+  },
+  info: {
+    label: 'Clocked in 32m',
+    before: { name: '$info',  light: '#0EA5E9', dark: '#0EA5E9' },
+    after:  { name: '$blue9', light: '#1E40AF', dark: '#93C5FD' },
+    note: '<code>$info</code> <code>#0EA5E9</code> is a fill colour doing a caption’s job, and it misses on <em>both</em> grounds — the clearest case for not reusing a brand hue as text. <code>$blue9</code> resolves to <code>#1E40AF</code> in light and <code>#93C5FD</code> in dark: one token, two grounds, legible on each.'
+  },
+  success: {
+    label: 'On site',
+    before: { name: '$green8', light: '#22C55E', dark: '#22C55E' },
+    after:  { name: '$green9', light: '#15803D', dark: '#5BD98A' },
+    note: 'Shown here against plain surfaces, but the real measurement was taken on its actual fill: <code>$green8</code> came out near 4.2:1 against the <code>$green3</code> chip background, just under the body-text minimum. <code>$green9</code> clears it. Contrast is a property of a pair — a colour on its own has none.'
+  }
+};
+
+function isDark(){
+  const set = document.documentElement.getAttribute('data-theme');
+  if (set) return set === 'dark';
+  return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
+function cell(id, token, hex, bg, label){
+  const el = document.querySelector('[data-cell="' + id + '"]');
+  const sample = el.querySelector('.sample');
+  sample.style.background = bg;
+  sample.style.borderColor = 'rgba(128,138,156,.32)';
+  const txt = el.querySelector('.txt');
+  txt.style.color = hex;
+  txt.textContent = label;
+  const hexEl = el.querySelector('.hex');
+  hexEl.textContent = token + '  ' + hex;
+  hexEl.style.color = bg === LIGHT_BG ? '#5A6478' : '#98A3B8';
+  const r = ratio(hex, bg);
+  el.querySelector('.ratio').textContent = r.toFixed(2);
+  const v = verdict(r);
+  const ve = el.querySelector('.verdict');
+  ve.className = 'verdict ' + v[0];
+  ve.textContent = v[1];
+}
+
+function paint(key){
+  const p = PAIRS[key];
+  cell('bl', p.before.name, p.before.light, LIGHT_BG, p.label);
+  cell('bd', p.before.name, p.before.dark,  DARK_BG,  p.label);
+  cell('al', p.after.name,  p.after.light,  LIGHT_BG, p.label);
+  cell('ad', p.after.name,  p.after.dark,   DARK_BG,  p.label);
+  document.getElementById('m-note').innerHTML = p.note;
+}
+
+let current = 'danger';
+document.querySelectorAll('[data-pair]').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('[data-pair]').forEach(function(b){ b.setAttribute('aria-pressed','false'); });
+    btn.setAttribute('aria-pressed','true');
+    current = btn.dataset.pair;
+    paint(current);
+  });
+});
+
+/* ── legend demo ───────────────────────────────────────────────────── */
+const monoBox = document.getElementById('mono');
+const legend = document.getElementById('legend');
+const LABELS = ['On site', 'Outside geofence', 'Violation'];
+monoBox.addEventListener('change', function(){
+  legend.classList.toggle('mono-sim', monoBox.checked);
+  legend.querySelectorAll('.lbl').forEach(function(el, i){
+    el.textContent = monoBox.checked ? '—' : LABELS[i];
+  });
+});
+
+/* ── rule ledger ───────────────────────────────────────────────────── */
+const RULES = [
+  ['feedback','no-mutation-without-toast','Every write confirms itself. A save that looks like nothing happened is the most common reason people save twice.'],
+  ['feedback','no-double-toast-in-catch','One failure, one message. Nested handlers were stacking two toasts for a single error.'],
+  ['feedback','no-double-loading-indicator','A spinner inside a skeleton reads as two things loading. One indicator per waiting region.'],
+  ['feedback','no-ignored-mutation-data','If the server returns a corrected value, the screen shows the server’s version, not the optimistic guess.'],
+  ['states','no-empty-state-without-error-state','"Nothing here yet" and "we could not load this" are different sentences. Shipping only the first makes failures invisible.'],
+  ['states','no-modal-mounted-while-closed','A closed modal still mounted keeps its timers and focus trap alive behind the page.'],
+  ['states','no-unstable-empty-collection-in-hook','A fresh empty array each render re-triggers effects and flickers the empty state.'],
+  ['tokens','no-hex-color-literals','A hand-typed hex is a colour that will never follow the theme. Contrast bugs enter the codebase exactly here.'],
+  ['tokens','no-isDark-ternary','Branching on theme at the call site is how light and dark drift apart. Tokens resolve per theme instead.'],
+  ['tokens','no-raw-pixel-spacing','Spacing comes from the scale, so vertical rhythm survives every new screen.'],
+  ['tokens','no-mixed-badge-sizes-in-row','Two badge sizes side by side read as a hierarchy that is not there.'],
+  ['tokens','no-clipped-text-override','Overrides that clip descenders or truncate without an ellipsis are rejected at the component boundary.'],
+  ['responsive','no-width-breakpoint-for-type-scale','Type scales with the type system, not with device width. A narrow window on a laptop is not a phone.'],
+  ['responsive','no-usemedia-for-device-class','Media queries describe the viewport, not the device. Capability checks go through one hook.'],
+  ['responsive','no-raw-dimensions-for-layout','Reading screen size to lay out a component breaks on rotation, split-screen and resize.'],
+  ['responsive','no-scrollview-in-adaptive-modal','The adaptive modal already scrolls. Nesting another scroller makes the sheet impossible to dismiss by drag.'],
+  ['responsive','no-redundant-page-gutter','Gutters belong to the page shell. Re-adding them per screen gives inconsistent margins at every breakpoint.'],
+  ['touch','no-scroller-swallows-first-tap','A list that eats the first tap after a scroll makes every control in it feel broken.'],
+  ['touch','credential-input-needs-textcontenttype','Password and OTP fields declare their content type, so the keyboard and autofill behave.'],
+  ['touch','no-unbounded-animation-loop','An animation with no end keeps the device awake and drains a phone that lives in an apron pocket.'],
+  ['touch','no-raw-text-outside-text','Stray text nodes crash React Native and skip the typography scale entirely.'],
+  ['i18n','no-missing-i18n-key','A string with no key ships as a blank space in the second language.'],
+  ['i18n','no-hardcoded-strings-in-shared','Shared components never carry copy. The consumer owns the words.'],
+  ['i18n','no-per-call-date-formatter','One formatter per locale, not one per render: dates stay consistent and the list stays fast.']
+];
+const rowsEl = document.getElementById('rows');
+const shownEl = document.getElementById('shown');
+function renderRules(cat){
+  const list = cat === 'all' ? RULES : RULES.filter(function(r){ return r[0] === cat; });
+  rowsEl.innerHTML = list.map(function(r){
+    return '<div class="row"><div class="name">' + r[1] + '</div>' +
+           '<div class="what"><span class="cat">' + r[0] + '</span>' + r[2] + '</div></div>';
+  }).join('');
+  shownEl.textContent = list.length;
+}
+document.querySelectorAll('[data-cat]').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('[data-cat]').forEach(function(b){ b.setAttribute('aria-pressed','false'); });
+    btn.setAttribute('aria-pressed','true');
+    renderRules(btn.dataset.cat);
+  });
+});
+renderRules('all');
+
+/* ── token grid ────────────────────────────────────────────────────── */
+const STATES = [
+  ['submitted','#3B82F6'],['assigned','#8B5CF6'],['awaitingInfo','#F59E0B'],['infoReceived','#06B6D4'],
+  ['accepted','#6366F1'],['inProgress','#EC4899'],['withVendor','#14B8A6'],['resolved','#10B981'],
+  ['verified','#22C55E'],['closed','#6B7280'],['reopened','#DC2626'],['escalated','#EA580C'],
+  ['transferred','#7C3AED'],['merged','#0891B2'],['cancelled','#71717A']
+];
+document.getElementById('tokens').innerHTML = STATES.map(function(s){
+  return '<div class="token"><div class="fill" style="background:' + s[1] + '"></div>' +
+         '<div class="meta"><span class="k">' + s[0] + '</span><span class="v">' + s[1] + '</span></div></div>';
+}).join('');
+
+/* ── motion grid ───────────────────────────────────────────────────── */
+const CURVES = [
+  ['quick','ease-out 100ms','Tooltips and dropdowns, fast enough to feel like no delay at all.'],
+  ['scalePress','cubic-bezier(.25,.1,.25,1) 120ms','The button-press dip, tuned shorter than a tap.'],
+  ['fast','ease-in-out 150ms','Hover and press feedback.'],
+  ['cardHover','cubic-bezier(.25,.1,.25,1) 200ms','Lift and shadow expansion on a card.'],
+  ['medium','ease-in-out 300ms','Component transitions.'],
+  ['bouncy','cubic-bezier(.175,.885,.32,1.275) 300ms','Playful confirmation, used sparingly.'],
+  ['staggerList','cubic-bezier(.25,.46,.45,.94) 300ms','Sequential list entrance.'],
+  ['slidePanel','cubic-bezier(.4,0,.2,1) 400ms','Login and modal panel slide.'],
+  ['slow','ease-in-out 450ms','Page transitions and modals.'],
+  ['pageEnter','cubic-bezier(.25,.46,.45,.94) 500ms','Staggered fade-up for page content.'],
+  ['lazy','ease-in-out 600ms','Background and ambient changes.'],
+  ['shimmer','ease-in-out 1500ms infinite','Skeleton pulse while data loads.']
+];
+document.getElementById('motion').innerHTML = CURVES.map(function(c, i){
+  return '<div class="curve"><div class="k">' + c[0] + '</div><div class="v">' + c[1] + '</div>' +
+         '<div class="u">' + c[2] + '</div>' +
+         '<div class="track"><i style="width:' + (16 + i * 6.5) + '%"></i></div></div>';
+}).join('');
+
+/* ── surfaces ──────────────────────────────────────────────────────── */
+const SURF = [
+  ['SalonMate','Operator, owner, admin, customer, public and marketing apps from one component package','React 19 · Expo · Tamagui · Playwright'],
+  ['HostelOps','Hostel allocation, hierarchy and approval flows for a 10,000-user campus','React · .NET · Node · PostgreSQL'],
+  ['ReSolve-IT','Grievance and resolution workflow across 15 tracked request states','React 19 · Vite · Tailwind 4 · Framer Motion · Recharts'],
+  ['ConstructionOps','Site progress, contractor payments and reporting dashboards','Next.js 14 · Tailwind · Radix · Recharts'],
+  ['napa','Scheduling and records app with end-to-end browser coverage','Next.js 16 · React 19 · Prisma · Playwright'],
+  ['GateOps','Gate-pass issue and verification, built for a guard holding a phone','React · Vite · Tailwind · Framer Motion'],
+  ['bharat-erp','Multi-module ERP frontend','React 19 · Vite · TanStack Query · Tailwind 4'],
+  ['Product sites','16 product sites across campus, clinical, fleet, salon, school and warehouse verticals','Hand-authored HTML · CSS']
+];
+document.getElementById('surfaces').innerHTML = SURF.map(function(s){
+  return '<tr><td>' + s[0] + '</td><td>' + s[1] + '</td><td class="stack">' + s[2] + '</td></tr>';
+}).join('');
+
+/* ── theme toggle ──────────────────────────────────────────────────── */
+const btn = document.getElementById('themeBtn');
+btn.addEventListener('click', function(){
+  const set = document.documentElement.getAttribute('data-theme');
+  let next;
+  if (!set) next = isDark() ? 'light' : 'dark';
+  else if (set === 'dark') next = 'light';
+  else next = null;
+  if (next) document.documentElement.setAttribute('data-theme', next);
+  else document.documentElement.removeAttribute('data-theme');
+  btn.textContent = 'theme: ' + (next || 'auto');
+});
+
+paint(current);
+</script>
+</body>
+</html>
